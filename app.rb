@@ -1,16 +1,35 @@
 
+# TODO Define API
+# TODO Slackbot? SMS? Alfred?
+# TODO Dash button (sleep, Netflix)
+# TODO Homekit/Siri (through Node app)
+# TODO Amazon Echo
+# TODO Automatic for S4
+# TODO Harmony? Through Smartthings?
+
 class App < Sinatra::Base
 
-    nest = NestThermostat::Nest.new(email: ENV['NEST_EMAIL'], password: ENV['NEST_PASSWORD'])
-
-    get '/' do
-        up = nest.status["shared"][ENV['NEST_UPSTAIRS_SERIAL']]
-        down = nest.status["shared"][ENV['NEST_DOWNSTAIRS_SERIAL']]
-        "Upstairs: #{up["current_temperature"]}°/#{up["target_temperature"]}° | Downstairs: #{down["current_temperature"]}°/#{down["target_temperature"]}°"
+    def initialize
+      options = {}
+      options[:nest_email] = ENV['NEST_EMAIL']
+      options[:nest_password] = ENV['NEST_PASSWORD']
+      @home = Home.new options
+      super()
     end
 
-    get '/status' do
-      "#{nest.status["shared"][ENV['NEST_UPSTAIRS_SERIAL']]}"
+    get '/api/status' do
+      { status: 'OK', message: 'HomeAPI is operational.' }.to_json
+    end
+
+    get '/api/mode/:mode' do
+      mode = params[:mode]
+      @home.on_mode_change(mode)
+      { status: 'OK', message: "Changed to mode: #{mode}." }.to_json
+    end
+
+    get '/api/commute/work/depart' do
+      @home.on_commute_left_work
+      { status: 'OK', message: 'Commute start' }.to_json
     end
 
 end
