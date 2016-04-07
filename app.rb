@@ -18,18 +18,26 @@ class App < Sinatra::Base
     end
 
     get '/api/status' do
-      { status: 'OK', message: 'HomeAPI is operational.' }.to_json
+      status = @home.status
+      { code: 'OK', message: 'HomeAPI is up and running.', status: status }.to_json
     end
 
     get '/api/mode/:mode' do
       mode = params[:mode]
       @home.on_mode_change(mode)
-      { status: 'OK', message: "Changed to mode: #{mode}." }.to_json
+      { code: 'OK', message: "Changed to mode: #{mode}." }.to_json
+    end
+
+    get '/api/temperature/:device_name/:temp' do
+      device_name = params[:device_name]
+      temp = params[:temp]
+      @home.on_temperature_change(device_name, temp)
+      { code: 'OK', message: "Temperature for #{device_name} set to mode: #{temp}." }.to_json
     end
 
     get '/api/commute/work/depart' do
       @home.on_commute_left_work
-      { status: 'OK', message: 'Commute start' }.to_json
+      { code: 'OK', message: 'Commute started.' }.to_json
     end
 
 end
