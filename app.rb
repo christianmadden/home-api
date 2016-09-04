@@ -1,43 +1,46 @@
 
-# TODO Define API
-# TODO Slackbot? SMS? Alfred?
 # TODO Dash button (sleep, Netflix)
-# TODO Homekit/Siri (through Node app)
 # TODO Amazon Echo
-# TODO Automatic for S4
-# TODO Harmony? Through Smartthings?
+# TODO Automatic Pro for S4
 
 class App < Sinatra::Base
 
-    def initialize
-      options = {}
-      options[:nest_email] = ENV['NEST_EMAIL']
-      options[:nest_password] = ENV['NEST_PASSWORD']
-      @home = Home.new options
-      super()
+  register Sinatra::Namespace
+
+  def initialize()
+    @home = Home.new
+    super()
+  end
+
+  get '/' do
+    %(<a href="/api/status">status</a>)
+  end
+
+  namespace '/api' do
+
+    get '/status' do
+      { status: 'success', data: @home.status }.to_json
     end
 
-    get '/api/status' do
-      status = @home.status
-      { code: 'OK', message: 'HomeAPI is up and running.', status: status }.to_json
+    # Execute routine
+    get '/routine/:name' do
+      routine = params[:name]
+      @home.execute_routine(routine)
+      { status: 'success', data: { routine: routine } }.to_json
     end
 
-    get '/api/mode/:mode' do
-      mode = params[:mode]
-      @home.on_mode_change(mode)
-      { code: 'OK', message: "Changed to mode: #{mode}." }.to_json
+    get '/temperature/:device/:temperature' do
+      device = params[:device]
+      temperature = params[:temperature]
+      @home.set_temperature(device, temperature)
+      { status: 'success', message: "Temperature for #{device} set to mode: #{temperature}.", data: { device: device, temperature: temperature } }.to_json
     end
 
-    get '/api/temperature/:device_name/:temp' do
-      device_name = params[:device_name]
-      temp = params[:temp]
-      @home.on_temperature_change(device_name, temp)
-      { code: 'OK', message: "Temperature for #{device_name} set to mode: #{temp}." }.to_json
-    end
-
-    get '/api/commute/work/depart' do
+    get '/commute/on/depart/work' do
       @home.on_commute_left_work
-      { code: 'OK', message: 'Commute started.' }.to_json
+      { status: 'success', message: "Commute started.", data: {} }.to_json
     end
+
+  end
 
 end
