@@ -41,6 +41,11 @@ class App < Sinatra::Base
       { status: 'success', message: "Commute started.", data: {} }.to_json
     end
 
+    get '/commute/on/arrive/home' do
+      @home.on_commute_arrive_home
+      { status: 'success', message: "Arrived home.", data: {} }.to_json
+    end
+
   end
 
 end

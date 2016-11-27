@@ -4,77 +4,110 @@ class Home
   def initialize()
     @smartthings = Devices::SmartThingsControl.new
     @hue = Devices::HueControl.new
-    @nest = Devices::NestControl.new
+    #@nest = Devices::NestControl.new
   end
 
   def status
     return {
       smartthings: { presence: { home: @smartthings.home?, away: @smartthings.away? } },
-      hue: { upstairs: @hue.status('Upstairs'), living_room_floor_lamp: @hue.status('Living Room Floor Lamp'), downstairs: @hue.status('Downstairs'), loft: @hue.status('Loft') },
-      nest: { upstairs: @nest.status('Upstairs'), downstairs: @nest.status('Downstairs') },
+      hue: { status: "status" },
+      #nest: { upstairs: @nest.status('Upstairs'), downstairs: @nest.status('Downstairs') },
     }
   end
 
   def execute_routine(routine)
 
     @smartthings.exec(routine)
-
-    upstairs = @hue.group('Upstairs')
-    living_room_floor_lamp = @hue.group('Living Room Floor Lamp')
-    cats = @hue.group('Cats')
     case routine
-    when 'morning', 'daytime', 'bedtime'
-      @hue.turn_group_off(upstairs)
-      @hue.turn_group_off(living_room_floor_lamp)
-      @hue.turn_group_off(cats)
-      @nest.home!
+    when 'morning', 'daytime', 'bedtime',
+      @hue.turn_light_off("Porch")
+      @hue.turn_light_off("Entryway")
+      @hue.turn_light_off("Living Room Floor Lamp")
+      @hue.turn_light_off("Living Room Table Lamp")
+      @hue.turn_light_off("Cube Lamp")
+      @hue.turn_light_off("Hallway")
+      @hue.turn_light_off("Study")
+      @hue.turn_light_off("Bedroom Lamp, Christian")
+      @hue.turn_light_off("Rope Light")
+      #@nest.home!
     when 'morning-away', 'daytime-away'
-      @hue.turn_group_off(upstairs)
-      @hue.turn_group_off(living_room_floor_lamp)
-      @hue.turn_group_off(cats)
-      @nest.away!
+      @hue.turn_light_off("Porch")
+      @hue.turn_light_off("Entryway")
+      @hue.turn_light_off("Living Room Floor Lamp")
+      @hue.turn_light_off("Living Room Table Lamp")
+      @hue.turn_light_off("Cube Lamp")
+      @hue.turn_light_off("Hallway")
+      @hue.turn_light_off("Study")
+      @hue.turn_light_off("Bedroom Lamp, Christian")
+      @hue.turn_light_off("Rope Light")
+      #@nest.away!
     when 'night-away', 'late-night-away'
-      @hue.turn_group_off(upstairs)
-      @hue.turn_group_off(living_room_floor_lamp)
-      @hue.turn_group_on(cats, 128)
-      @nest.away!
+      @hue.turn_light_off("Porch")
+      @hue.turn_light_off("Entryway")
+      @hue.turn_light_on("Living Room Floor Lamp", 128, 2500)
+      @hue.turn_light_off("Living Room Table Lamp")
+      @hue.turn_light_on("Cube Lamp", 128, 2500)
+      @hue.turn_light_on("Hallway", 64, 2300)
+      @hue.turn_light_off("Study")
+      @hue.turn_light_off("Bedroom Lamp, Christian")
+      @hue.turn_light_off("Rope Light")
+      #@nest.away!
     when 'night'
-      @hue.turn_group_on(upstairs)
-      @hue.turn_group_on(living_room_floor_lamp, 254, 2700)
-      @nest.home!
+      @hue.turn_light_on("Entryway", 216, 2500)
+      @hue.turn_light_on("Living Room Floor Lamp", 254, 2700)
+      @hue.turn_light_on("Living Room Table Lamp", 254, 2700)
+      @hue.turn_light_on("Cube Lamp", 254, 2700)
+      @hue.turn_light_on("Hallway", 254, 2700)
+      #@nest.home!
     when 'late-night'
-      @hue.turn_group_on(upstairs, 128)
-      @hue.turn_group_on(living_room_floor_lamp, 216, 2500)
-      @nest.home!
+      @hue.turn_light_on("Entryway", 128, 2400)
+      @hue.turn_light_on("Living Room Floor Lamp", 216, 2500)
+      @hue.turn_light_on("Living Room Table Lamp", 216, 2500)
+      @hue.turn_light_on("Cube Lamp", 216, 2500)
+      @hue.turn_light_off("Hallway")
+      #@nest.home!
     when 'sleepy'
-      @hue.turn_group_on(upstairs, 32)
-      @hue.turn_group_off(living_room_floor_lamp)
-      @nest.home!
+      @hue.turn_light_off("Entryway")
+      @hue.turn_light_off("Living Room Floor Lamp")
+      @hue.turn_light_on("Living Room Table Lamp", 128, 2300)
+      @hue.turn_light_on("Cube Lamp", 128, 2300)
+      @hue.turn_light_off("Hallway")
+      #@nest.home!
     when 'reading'
-      @hue.turn_group_on(upstairs, 254, 4500)
-      @hue.turn_group_on(living_room_floor_lamp, 254, 4500)
-      @nest.home!
+      @hue.turn_light_on("Living Room Floor Lamp", 254, 4500)
+      @hue.turn_light_on("Living Room Table Lamp", 254, 4500)
+      #@nest.home!
     when 'tivo'
-      @nest.home!
+      True
+      #@nest.home!
     when 'appletv'
-      @nest.home!
+      True
+      #@nest.home!
     when 'playstation'
-      @nest.home!
+      True
+      #@nest.home!
     when 'xbox'
-      @nest.home!
+      True
+      #@nest.home!
     when 'turntable'
-      @nest.home!
+      True
+      #@nest.home!
     when 'shutdown'
-      @nest.home!
+      True
+      #@nest.home!
     end
   end
 
   def set_temperature(device, temperature)
-    @nest.set_temperature(device, temperature)
+    #@nest.set_temperature(device, temperature)
   end
 
   def on_commute_left_work
-    @nest.home!
+    #@nest.home!
+  end
+
+  def on_commute_arrive_home
+    # TODO Turn on porch light if night, etc.
   end
 
 end
