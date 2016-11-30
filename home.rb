@@ -9,8 +9,9 @@ class Home
 
   def status
     return {
-      smartthings: { presence: { home: @smartthings.home?, away: @smartthings.away? } },
-      hue: { status: "status" },
+      status: { status: "status" }
+      #smartthings: { presence: { home: @smartthings.home?, away: @smartthings.away? } },
+      #hue: { status: "status" },
       #nest: { upstairs: @nest.status('Upstairs'), downstairs: @nest.status('Downstairs') },
     }
   end
@@ -57,7 +58,7 @@ class Home
       @hue.turn_light_on("Living Room Floor Lamp", 254, 2700)
       @hue.turn_light_on("Living Room Table Lamp", 254, 2700)
       @hue.turn_light_on("Cube Lamp", 254, 2700)
-      @hue.turn_light_on("Hallway", 254, 2700)
+      @hue.turn_light_on("Hallway", 216, 2500)
       #@nest.home!
     when 'late-night'
       @hue.turn_light_on("Entryway", 128, 2400)
@@ -68,9 +69,9 @@ class Home
       #@nest.home!
     when 'sleepy'
       @hue.turn_light_off("Entryway")
-      @hue.turn_light_off("Living Room Floor Lamp")
-      @hue.turn_light_on("Living Room Table Lamp", 128, 2300)
-      @hue.turn_light_on("Cube Lamp", 128, 2300)
+      @hue.turn_light_on("Living Room Floor Lamp", 64, 2200)
+      @hue.turn_light_off("Living Room Table Lamp")
+      @hue.turn_light_on("Cube Lamp", 64, 2200)
       @hue.turn_light_off("Hallway")
       #@nest.home!
     when 'reading'
