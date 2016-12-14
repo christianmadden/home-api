@@ -65,6 +65,13 @@ module Devices
       end
     end
 
+    def fade_light_off(name, milliseconds)
+      light = self.light(name)
+      if light
+        light.set_state({:brightness => 0}, seconds / 100)
+      end
+    end
+
     def group(name)
       (@client.groups.select { |group| group.name == name }).first
     end
