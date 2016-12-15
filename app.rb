@@ -3,9 +3,12 @@ class App < Sinatra::Base
 
   register Sinatra::Namespace
 
+  configure :production, :development do
+    enable :logging
+  end
+
   def initialize()
     @home = Home.new
-    @store = Persist.new
     super()
   end
 
@@ -22,21 +25,17 @@ class App < Sinatra::Base
     # Execute routine triggered by IFTTT
     get '/ifttt/:name' do
       routine = params[:name]
-      if ['morning', 'morning-away', 'daytime', 'daytime-away', 'night', 'night-away', 'late-night', 'late-night-away', 'sleepy', 'bedtime'].include? routine
-        @store[:mode] = routine
-      end
+      logger.info "IFTTT: " + routine
       @home.execute_routine(routine, { execute_on_smart_things: true })
-      { status: 'success', data: { routine: routine, mode: @store[:mode] } }.to_json
+      { status: 'success', data: { routine: routine, mode: @home.mode() } }.to_json
     end
 
     # Execute routine triggered by SmartThings
     get '/routine/:name' do
       routine = params[:name]
-      if ['morning', 'morning-away', 'daytime', 'daytime-away', 'night', 'night-away', 'late-night', 'late-night-away', 'sleepy', 'bedtime'].include? routine
-        @store[:mode] = routine
-      end
+      logger.info "ST: " + routine
       @home.execute_routine(routine, { execute_on_smart_things: false })
-      { status: 'success', data: { routine: routine, mode: @store[:mode] } }.to_json
+      { status: 'success', data: { routine: routine, mode: @home.mode() } }.to_json
     end
 
     get '/temperature/:device/:temperature' do
@@ -47,8 +46,8 @@ class App < Sinatra::Base
     end
 
     get '/commute/work/depart/:person' do
-      @home.commute_work_depart(params[:person], @store[:mode])
-      { status: 'success', message: "Departed work", data: { person: params[:person], mode: @store[:mode] } }.to_json
+      @home.commute_work_depart(params[:person])
+      { status: 'success', message: "Departed work", data: { person: params[:person] } }.to_json
     end
 
     get '/commute/work/arrive/:person' do
@@ -60,8 +59,8 @@ class App < Sinatra::Base
     end
 
     get '/commute/home/arrive/:person' do
-      @home.commute_home_arrive(params[:person], @store[:mode])
-      { status: 'success', message: "Arrived home.", data: { person: params[:person], mode: @store[:mode] } }.to_json
+      @home.commute_home_arrive(params[:person])
+      { status: 'success', message: "Arrived home.", data: { person: params[:person] } }.to_json
     end
 
   end

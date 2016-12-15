@@ -5,32 +5,28 @@ class Home
     @smartthings = Devices::SmartThingsControl.new
     @hue = Devices::HueControl.new
     @nest = Devices::NestControl.new
+    @store = Persist.new
   end
 
   def status
     return {
-      status: { status: "status" }
-      #smartthings: { presence: { home: @smartthings.home?, away: @smartthings.away? } },
-      #hue: { status: "status" },
-      #nest: { upstairs: @nest.status('Upstairs'), downstairs: @nest.status('Downstairs') },
+      smartthings: { mode: self.mode(), home: self.is_home?, away: self.is_away?, day: self.is_day?, night: self.is_night? }
     }
   end
 
-  def execute_routine(routine, opts)
+  def execute_routine(routine, opts = {})
+    if self.is_mode?(routine)
+      self.set_mode(routine)
+    end
     if opts[:execute_on_smart_things]
-      #@smartthings.exec(routine)
+      @smartthings.exec(routine)
     end
     case routine
-    when 'morning', 'daytime', 'bedtime',
+    when 'morning', 'daytime', 'morning-away', 'daytime-away', 'bedtime'
       @hue.turn_light_off("Living Room Front")
       @hue.turn_light_off("Living Room Rear")
       @hue.turn_light_off("Cube")
       @nest.home!
-    when 'morning-away', 'daytime-away'
-      @hue.turn_light_off("Living Room Front")
-      @hue.turn_light_off("Living Room Rear")
-      @hue.turn_light_off("Cube")
-      @nest.away!
     when 'night-away'
       @hue.turn_light_on("Living Room Front", 128, 2200)
       @hue.turn_light_off("Living Room Rear")
@@ -75,16 +71,44 @@ class Home
     end
   end
 
+  def mode
+    @store[:mode]
+  end
+
+  def set_mode(mode)
+    @store[:mode] = mode
+  end
+
+  def is_mode?(routine)
+    ['morning', 'morning-away', 'daytime', 'daytime-away', 'night', 'night-away', 'late-night', 'late-night-away', 'sleepy', 'bedtime'].include? routine
+  end
+
+  def is_home?
+    !self.is_away?
+  end
+
+  def is_away?
+    @store[:mode].include? 'away'
+  end
+
+  def is_night?
+    self.mode().include? 'night' || mode == 'sleepy' || mode == 'bedtime'
+  end
+
+  def is_day?
+    !self.is_night?
+  end
+
   def set_temperature(device, temperature)
     @nest.set_temperature(device, temperature)
   end
 
-  def commute_work_depart(person, mode)
+  def commute_work_depart(person)
     @nest.home!
   end
 
-  def commute_home_arrive(person, mode)
-    if ['night', 'night-away', 'late-night', 'late-night-away', 'sleepy'].include? mode
+  def commute_home_arrive(person)
+    if self.is_night?
       @hue.turn_light_on("Porch", 254, 2700)
     end
   end
