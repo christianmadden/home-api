@@ -5,6 +5,7 @@ class Home
     @smartthings = Devices::SmartThingsControl.new
     @hue = Devices::HueControl.new
     @nest = Devices::NestControl.new
+    @sonos = Devices::SonosControl.new
     @store = Persist.new
   end
 
@@ -72,7 +73,11 @@ class Home
   end
 
   def mode
-    @store[:mode]
+    if mode = @store[:mode]
+      mode
+    else
+      ""
+    end
   end
 
   def set_mode(mode)
@@ -88,7 +93,7 @@ class Home
   end
 
   def is_away?
-    @store[:mode].include? 'away'
+    self.mode().include? 'away'
   end
 
   def is_night?
