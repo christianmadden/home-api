@@ -4,6 +4,9 @@ require 'bundler'
 
 Bundler.require
 
+require 'dotenv'
+Dotenv.load
+
 require './devices/smart-things-control'
 require './devices/hue-control'
 require './devices/nest-control'
