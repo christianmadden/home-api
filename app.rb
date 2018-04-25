@@ -3,8 +3,11 @@ class App < Sinatra::Base
 
   register Sinatra::Namespace
 
-  configure :production, :development do
+  configure do
     enable :logging
+    file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
+    file.sync = true
+    use Rack::CommonLogger, file
   end
 
   def initialize()
