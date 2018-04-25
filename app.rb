@@ -3,6 +3,11 @@ class App < Sinatra::Base
 
   register Sinatra::Namespace
 
+  def initialize()
+    @home = Home.new
+    super()
+  end
+
   configure do
     enable :logging
     file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
@@ -10,18 +15,21 @@ class App < Sinatra::Base
     use Rack::CommonLogger, file
   end
 
-  def initialize()
-    @home = Home.new
-    super()
+  register do
+    def auth(require_auth)
+        condition do
+            error 401 unless params[:key] == ENV['HOME_API_KEY']
+        end
+    end
   end
 
   get '/' do
-    %(<a href="/api/status">status</a>)
+    'Hi.'
   end
 
-  namespace '/api' do
+  namespace '/api/:key' do
 
-    get '/status' do
+    get '/status', :auth => true do
       { status: 'success', data: @home.status }.to_json
     end
 
