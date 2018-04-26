@@ -1,6 +1,19 @@
 
 class Home
 
+  @@HUE_ULTRA_WARM = 2100
+  @@HUE_SUPER_WARM = 2200
+  @@HUE_WARM = 2700
+  @@HUE_NEUTRAL = 4100
+  @@HUE_COOL = 5000
+  @@HUE_DAYLIGHT = 6500
+
+  @@HUE_FULL_BRIGHTNESS = 255
+  @@HUE_MODERATE_BRIGHTNESS = 192
+  @@HUE_HALF_BRIGHTNESS = 128
+  @@HUE_QUARTER_BRIGHTNESS = 64
+  @@HUE_DIM_BRIGHTNESS = 32
+
   def initialize()
     @smartthings = Devices::SmartThingsControl.new
     @hue = Devices::HueControl.new
@@ -15,49 +28,48 @@ class Home
     }
   end
 
-  def execute_routine(routine, opts = {})
-    if self.is_mode?(routine)
-      self.set_mode(routine)
-    end
+  def set_mode(mode, opts = {})
+
     if opts[:execute_on_smart_things]
-      @smartthings.exec(routine)
+      @smartthings.exec(mode)
     end
+
     case routine
     when 'morning', 'daytime', 'morning-away', 'daytime-away', 'bedtime'
-      @hue.turn_light_off("Living Room Front")
-      @hue.turn_light_off("Living Room Rear")
-      @hue.turn_light_off("Cube")
+      @hue.off("Living Room Front")
+      @hue.off("Living Room Rear")
+      @hue.off("Cube")
+      @hue.off("Porch")
+      #@smartThings.lightOff("Porch Lights")
       @nest.home!
     when 'night-away'
-      @hue.turn_light_on("Living Room Front", 128, 2200)
-      @hue.turn_light_off("Living Room Rear")
-      @hue.turn_light_on("Cube", 128, 2200)
+      @hue.on("Living Room Front", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM )
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
       @nest.away!
     when 'late-night-away'
-      @hue.turn_light_on("Living Room Front", 64, 2100)
-      @hue.turn_light_off("Living Room Rear")
-      @hue.turn_light_on("Cube", 64, 2100)
+      @hue.on("Living Room Front", @@HUE_QUARTER_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_QUARTER_BRIGHTNESS, @@HUE_ULTRA_WARM)
       @nest.away!
     when 'night'
-      @hue.turn_light_on("Living Room Front", 254, 2700)
-      @hue.turn_light_on("Living Room Rear", 254, 2700)
-      @hue.turn_light_on("Cube", 254, 2700)
+      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
+      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
+      @hue.on("Cube", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
       @nest.home!
     when 'late-night'
-      @hue.turn_light_on("Living Room Front", 128, 2200)
-      @hue.turn_light_on("Living Room Rear", 128, 2200)
-      @hue.turn_light_on("Cube", 128, 2200)
+      @hue.on("Living Room Front", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @hue.on("Living Room Rear", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @hue.on("Cube", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
       @nest.home!
     when 'sleepy'
-      @hue.turn_light_on("Living Room Front", 38, 2100)
-      @hue.turn_light_off("Living Room Rear")
-      @hue.turn_light_on("Cube", 38, 2100)
+      @hue.on("Living Room Front", @@HUE_DIM_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_DIM_BRIGHTNESS, @@HUE_ULTRA_WARM)
       @nest.home!
     when 'reading'
-      @hue.turn_light_on("Living Room Front", 254, 4500)
-      @hue.turn_light_on("Living Room Rear", 254, 4500)
-      @nest.home!
-    when 'tivo'
+      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
+      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
       @nest.home!
     when 'appletv'
       @nest.home!
@@ -65,7 +77,59 @@ class Home
       @nest.home!
     when 'xbox'
       @nest.home!
-    when 'turntable'
+    when 'shutdown'
+      @nest.home!
+    end
+  end
+
+  def run_activity(mode, opts = {})
+
+    if opts[:execute_on_smart_things]
+      @smartthings.exec(mode)
+    end
+
+    case routine
+    when 'morning', 'daytime', 'morning-away', 'daytime-away', 'bedtime'
+      @hue.off("Living Room Front")
+      @hue.off("Living Room Rear")
+      @hue.off("Cube")
+      @hue.off("Porch")
+      #@smartThings.lightOff("Porch Lights")
+      @nest.home!
+    when 'night-away'
+      @hue.on("Living Room Front", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM )
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @nest.away!
+    when 'late-night-away'
+      @hue.on("Living Room Front", @@HUE_QUARTER_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_QUARTER_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @nest.away!
+    when 'night'
+      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
+      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
+      @hue.on("Cube", @@HUE_FULL_BRIGHTNESS, @@HUE_WARM)
+      @nest.home!
+    when 'late-night'
+      @hue.on("Living Room Front", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @hue.on("Living Room Rear", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @hue.on("Cube", @@HUE_HALF_BRIGHTNESS, @@HUE_SUPER_WARM)
+      @nest.home!
+    when 'sleepy'
+      @hue.on("Living Room Front", @@HUE_DIM_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @hue.off("Living Room Rear")
+      @hue.on("Cube", @@HUE_DIM_BRIGHTNESS, @@HUE_ULTRA_WARM)
+      @nest.home!
+    when 'reading'
+      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
+      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
+      @nest.home!
+    when 'appletv'
+      @nest.home!
+    when 'playstation'
+      @nest.home!
+    when 'xbox'
       @nest.home!
     when 'shutdown'
       @nest.home!
@@ -84,15 +148,11 @@ class Home
     @store[:mode] = mode
   end
 
-  def is_mode?(routine)
-    ['morning', 'morning-away', 'daytime', 'daytime-away', 'night', 'night-away', 'late-night', 'late-night-away', 'sleepy', 'bedtime'].include? routine
-  end
-
-  def is_home?
+  def isHome?
     !self.is_away?
   end
 
-  def is_away?
+  def isAway?
     self.mode().include? 'away'
   end
 
@@ -104,17 +164,21 @@ class Home
     !self.is_night?
   end
 
-  def set_temperature(device, temperature)
-    @nest.set_temperature(device, temperature)
+  def set_thermostat(location, temperature)
+    @nest.set_temperature(location, temperature)
   end
 
-  def commute_work_depart(person)
+  def set_thermostat_presence(location, presence)
+
+  # Tell Nest that I am home when I leave work so that the house is warm when I actually get home
+  def car_left_work(car)
     @nest.home!
   end
 
-  def commute_home_arrive(person)
+  # When I get home, turn on the porch light if it's night
+  def car_arrived_home(car)
     if self.is_night?
-      @hue.turn_light_on("Porch", 254, 2700)
+      @hue.on("Porch", @@HUE_FULL_BRIGHTNESS , @@HUE_WARM)
     end
   end
 

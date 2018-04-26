@@ -15,6 +15,10 @@ module Devices
       response = HTTParty.post(@endpoint_url + '/routine/' + @routine, :headers => { 'Authorization' => 'Bearer ' + @access_token })
     end
 
+    def on
+      
+    end
+
   end
 
 end

@@ -1,4 +1,10 @@
 
+# TODO: Harmony
+# TODO: Automatic
+# TODO: Caseta
+# TODO: Sonos
+# TODO: Look into speaking commands to Alexa via text-to-speech (control Sonos from basement Dot?)
+
 class App < Sinatra::Base
 
   register Sinatra::Namespace
@@ -30,48 +36,56 @@ class App < Sinatra::Base
   namespace '/api/:key' do
 
     get '/status', :auth => true do
+      logger.info "STATUS: #{@home.status}"
       { status: 'success', data: @home.status }.to_json
     end
 
-    # Execute routine triggered by IFTTT
-    get '/ifttt/:name' do
-      routine = params[:name]
-      logger.info "IFTTT: " + routine
-      @home.execute_routine(routine, { execute_on_smart_things: true })
-      { status: 'success', data: { routine: routine, mode: @home.mode() } }.to_json
+    # Switch house to mode and optionally execute matching SmartThings routine
+    get '/mode/:name/smartthings?/:execute_on_smart_things?' do
+      mode = params[:name]
+      logger.info "MODE: #{mode}"
+      @home.setMode(mode, { execute_on_smart_things: params[:execute_on_smart_things] })
+      { status: 'success', data: { mode: mode } }.to_json
     end
 
-    # Execute routine triggered by SmartThings
-    get '/routine/:name' do
-      routine = params[:name]
-      logger.info "ST: " + routine
-      @home.execute_routine(routine, { execute_on_smart_things: false })
-      { status: 'success', data: { routine: routine, mode: @home.mode() } }.to_json
+    # Perform activity
+    get '/activity/:name' do
+      activity = params[:name]
+      logger.info "ACTIVITY: #{activity}"
+      @home.activity(activity)
+      { status: 'success', data: { activity: activity } }.to_json
     end
 
-    get '/temperature/:device/:temperature' do
-      device = params[:device]
+    # Set thermostat to temp
+    get '/thermostat/:location/:temperature' do
+      location = params[:location]
       temperature = params[:temperature]
-      @home.set_temperature(device, temperature)
-      { status: 'success', message: "Temperature for #{device} set to mode: #{temperature}.", data: { device: device, temperature: temperature } }.to_json
+      logger.info "THERMOSTAT SET: #{location} set to #{temperature}"
+      @home.setThermostat(location, temperature)
+      { status: 'success', message: "Thermostat #{location} set to #{temperature}", data: { location: location, temperature: temperature } }.to_json
     end
 
-    get '/commute/work/depart/:person' do
-      @home.commute_work_depart(params[:person])
-      { status: 'success', message: "Departed work", data: { person: params[:person] } }.to_json
+    # Set thermostat presence to Home or Away/Eco
+    get '/thermostat/:location/:presence' do
+      location = params[:location]
+      presence = params[:presence]
+      logger.info "THERMOSTAT PRESENCE: " + presence
+      @home.setThermostatPresence(location, presence)
+      { status: 'success', message: "Thermostat #{presence} set to #{presence}", data: { location: location, presence: presence } }.to_json
     end
 
-    get '/commute/work/arrive/:person' do
-      { status: 'noop' }
-    end
-
-    get '/commute/home/depart/:person' do
-      { status: 'noop' }
-    end
-
-    get '/commute/home/arrive/:person' do
-      @home.commute_home_arrive(params[:person])
-      { status: 'success', message: "Arrived home.", data: { person: params[:person] } }.to_json
+    # Car has arrived or left location
+    get '/car/:car/:location/:event' do
+      car = params[:car]
+      location = params[:location]
+      event = params[:event]
+      logger.info "CAR: #{car} #{event} from #{location}"
+      if car.include? "audi" and location.include? "work" and event.include? "depart"
+        @home.carLeftWork(car)
+      elsif car.include? "audi" and location.include? "home" and event.include? "arrive"
+        @home.carArrivedHome(car)
+      end
+      { status: 'success', message: "#{car} #{event} from #{location}", data: { car: car, location: location, event: event } }.to_json
     end
 
   end
