@@ -7,10 +7,9 @@ Bundler.require
 require 'dotenv'
 Dotenv.load
 
-require './devices/smartthings'
-require './devices/hue'
-require './devices/nest'
-require './devices/sonos'
+require './devices/smartthings-control'
+require './devices/hue-control'
+require './devices/nest-control'
 require './home'
 require './app'
 

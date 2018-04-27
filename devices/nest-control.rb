@@ -13,15 +13,33 @@ module Devices
       @client.set_default_structure
     end
 
-    def status(name)
+    def current_temperature(name)
       @client.set_device(name.capitalize)
-      return {
-        away: @client.away?,
-        current_temperature: @client.current_temperature.round(1),
-        target_temperature: @client.temperature.round(1),
-        humidity: @client.humidity,
-        leaf: @client.leaf?
-      }
+      @client.current_temperature.round(0)
+    end
+
+    def target_temperature(name)
+      @client.set_device(name.capitalize)
+      @client.temperature.round(0)
+    end
+
+    def humidity(name)
+      @client.set_device(name.capitalize)
+      @client.humidity.round(0)
+    end
+
+    def away(name)
+      @client.set_device(name.capitalize)
+      @client.away?
+    end
+
+    def home(name)
+      !away(name)
+    end
+
+    def leaf(name)
+      @client.set_device(name.capitalize)
+      @client.leaf?
     end
 
     def set_temperature(device, temperature)
