@@ -10,6 +10,7 @@ Dotenv.load
 require './devices/smartthings-control'
 require './devices/hue-control'
 require './devices/nest-control'
+require './devices/harmony-control'
 require './home'
 require './app'
 

@@ -18,6 +18,7 @@ class Home
     @smartthings = Devices::SmartThingsControl.new
     @hue = Devices::HueControl.new
     @nest = Devices::NestControl.new
+    @harmony = Devices::HarmonyControl.new
     @store = Persist.new
   end
 
@@ -152,6 +153,19 @@ class Home
     if self.is_night?
       @hue.on("Porch", @@HUE_FULL_BRIGHTNESS , @@HUE_WARM)
     end
+  end
+
+  # Harmony
+  def harmony_off()
+    @harmony.off()
+  end
+
+  def harmony_mute()
+    @harmony.mute()
+  end
+
+  def harmony_activity(activity)
+    @harmony.activity(activity)
   end
 
 end

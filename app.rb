@@ -96,6 +96,26 @@ class App < Sinatra::Base
       { status: 'success', message: "#{car} #{event} from #{location}", data: { car: car, location: location, event: event } }.to_json
     end
 
+    # Harmony functions
+    get '/harmony/off', :auth => true do
+      logger.info "HARMONY: off"
+      @home.harmony_off()
+      { status: 'success', message: "Harmony off", data: {} }.to_json
+    end
+
+    get '/harmony/mute', :auth => true do
+      logger.info "HARMONY: mute"
+      @home.harmony_mute()
+      { status: 'success', message: "Harmony mute", data: {} }.to_json
+    end
+
+    get '/harmony/:activity', :auth => true do
+      activity = params[:activity]
+      logger.info "HARMONY: #{activity} ON"
+      @home.harmony_activity(activity)
+      { status: 'success', message: "HARMONY: #{activity} ON", data: { activity: activity } }.to_json
+    end
+
   end
 
 end
