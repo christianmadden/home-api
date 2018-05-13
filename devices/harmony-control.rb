@@ -18,6 +18,16 @@ module Devices
       self.post("/activities/poweroff")
     end
 
+    # Play on device
+    def play(device)
+      self.post("/devices/#{device}/commands/play")
+    end
+
+    # Pause on device
+    def pause(device)
+      self.post("/devices/#{device}/commands/pause")
+    end
+
     # Toggles mute on and off. Doesn't track state.
     def mute()
       self.post("/devices/#{@volume_device}/commands/mute")

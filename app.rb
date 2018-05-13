@@ -103,6 +103,20 @@ class App < Sinatra::Base
       { status: 'success', message: "Harmony off", data: {} }.to_json
     end
 
+    get '/harmony/:device/play', :auth => true do
+      device = params[:device]
+      logger.info "HARMONY: play"
+      @home.harmony_play(device)
+      { status: 'success', message: "Harmony play", data: { device: device } }.to_json
+    end
+
+    get '/harmony/:device/pause', :auth => true do
+      device = params[:device]
+      logger.info "HARMONY: pause"
+      @home.harmony_pause(device)
+      { status: 'success', message: "Harmony pause", data: { device: device } }.to_json
+    end
+
     get '/harmony/mute', :auth => true do
       logger.info "HARMONY: mute"
       @home.harmony_mute()

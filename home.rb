@@ -160,6 +160,14 @@ class Home
     @harmony.off()
   end
 
+  def harmony_play(device)
+    @harmony.play(device)
+  end
+
+  def harmony_pause(device)
+    @harmony.pause(device)
+  end
+
   def harmony_mute()
     @harmony.mute()
   end
