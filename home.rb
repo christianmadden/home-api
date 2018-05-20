@@ -91,13 +91,12 @@ class Home
 
   end
 
-  def run_activity(activity, opts = {})
+  def activity(activity, opts = {})
 
     case activity
     when 'reading'
       @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
       @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
-      @nest.home!
     when 'apple-tv'
       @harmony.activity(activity)
     when 'ps4'
