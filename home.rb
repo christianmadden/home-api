@@ -80,6 +80,13 @@ class Home
       @hue.off("Living Room Rear")
       @hue.on("Cube", @@HUE_DIM_BRIGHTNESS, @@HUE_ULTRA_WARM)
       @nest.home!
+    when 'bedtime'
+      @hue.off("Living Room Front")
+      @hue.off("Living Room Rear")
+      @hue.off("Cube")
+      @hue.off("Porch")
+      @nest.home!
+      self.harmony_off()
     end
 
   end
@@ -91,14 +98,16 @@ class Home
       @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
       @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
       @nest.home!
-    when 'appletv'
-      @nest.home!
-    when 'playstation'
-      @nest.home!
+    when 'apple-tv'
+      @harmony.activity(activity)
+    when 'ps4'
+      @harmony.activity(activity)
     when 'xbox'
-      @nest.home!
+      @harmony.activity(activity)
+    when 'switch'
+      @harmony.activity(activity)
     when 'shutdown'
-      @nest.home!
+      self.harmony_off()
     end
 
   end
