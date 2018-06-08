@@ -4,6 +4,7 @@ class Home
   @@HUE_ULTRA_WARM = 2100
   @@HUE_SUPER_WARM = 2200
   @@HUE_WARM = 2700
+  @@HUE_NEUTRAL_WARM = 3100
   @@HUE_NEUTRAL = 4100
   @@HUE_COOL = 5000
   @@HUE_DAYLIGHT = 6500
@@ -48,7 +49,7 @@ class Home
     store_mode(mode)
 
     case mode
-    when 'morning', 'daytime', 'morning-away', 'daytime-away', 'bedtime'
+    when 'morning', 'daytime', 'morning-away', 'daytime-away'
       @hue.off("Living Room Front")
       @hue.off("Living Room Rear")
       @hue.off("Cube")
@@ -95,8 +96,8 @@ class Home
 
     case activity
     when 'reading'
-      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
-      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL)
+      @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL_WARM)
+      @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL_WARM)
     when 'apple-tv'
       @harmony.activity(activity)
     when 'ps4'
