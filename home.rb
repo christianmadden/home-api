@@ -98,13 +98,13 @@ class Home
     when 'reading'
       @hue.on("Living Room Front", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL_WARM)
       @hue.on("Living Room Rear", @@HUE_FULL_BRIGHTNESS, @@HUE_NEUTRAL_WARM)
-    when 'apple-tv'
+    when 'apple-tv', 'watch-tv', 'tv'
       @harmony.activity(activity)
-    when 'ps4'
+    when 'ps4', 'playstation'
       @harmony.activity(activity)
     when 'xbox'
       @harmony.activity(activity)
-    when 'switch'
+    when 'switch', 'nintendo'
       @harmony.activity(activity)
     when 'shutdown'
       self.harmony_off()
