@@ -64,6 +64,15 @@ class App < Sinatra::Base
       { status: 'success', data: { activity: activity } }.to_json
     end
 
+    # Turn individual lights on or off
+    #get '/light/:name/:action', :auth => true do
+    #  name = params[:name]
+    #  action = params[:action]
+    #  logger.info "LIGHT: #{name} set to #{action}"
+    #  @home.setLight(name, action)
+    #  { status: 'success', message: "Light #{name} set to #{action}", data: { name: name, action: action } }.to_json
+    #end
+
     # Set thermostat to temp
     get '/thermostat/:location/:temperature', :auth => true do
       location = params[:location]

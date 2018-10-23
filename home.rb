@@ -140,6 +140,10 @@ class Home
     !self.is_night?
   end
 
+  #def set_light(name, action)
+  #  
+  #end
+
   def set_thermostat(location, temperature)
     @nest.set_temperature(location, temperature)
   end
