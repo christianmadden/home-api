@@ -133,7 +133,7 @@ class Home
   end
 
   def is_night?
-    self.mode().include? 'night' || mode == 'sleepy' || mode == 'bedtime'
+    self.mode().include? 'night'
   end
 
   def is_day?
