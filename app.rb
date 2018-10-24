@@ -78,7 +78,7 @@ class App < Sinatra::Base
       location = params[:location]
       temperature = params[:temperature]
       logger.info "THERMOSTAT SET: #{location} set to #{temperature}"
-      @home.setThermostat(location, temperature)
+      #@home.setThermostat(location, temperature)
       { status: 'success', message: "Thermostat #{location} set to #{temperature}", data: { location: location, temperature: temperature } }.to_json
     end
 

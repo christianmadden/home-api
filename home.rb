@@ -145,7 +145,7 @@ class Home
   #end
 
   def set_thermostat(location, temperature)
-    @nest.set_temperature(location, temperature)
+    #@nest.set_temperature(location, temperature)
   end
 
   def set_thermostat_presence(location, presence)
